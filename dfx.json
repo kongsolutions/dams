@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "decentralized-identity-server-backend": {
+      "candid": "src/decentralized-identity-server-backend/decentralized-identity-server-backend.did",
+      "package": "decentralized-identity-server-backend",
+      "type": "rust"
+    },
+    "decentralized-identity-server-frontend": {
+      "dependencies": [
+        "decentralized-identity-server-backend"
+      ],
+      "source": [
+        "src/decentralized-identity-server-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "decentralized-identity-server-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/decentralized-identity-server-backend"
+]
+resolver = "2"
