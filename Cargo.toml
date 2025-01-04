@@ -1,5 +1,3 @@
 [workspace]
-members = [
-    "src/decentralized-identity-server-backend"
-]
+members = ["src/registry", "src/did_shard"]
 resolver = "2"

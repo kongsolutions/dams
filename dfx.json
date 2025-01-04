@@ -1,25 +1,26 @@
 {
   "canisters": {
-    "decentralized-identity-server-backend": {
-      "candid": "src/decentralized-identity-server-backend/decentralized-identity-server-backend.did",
-      "package": "decentralized-identity-server-backend",
-      "type": "rust"
+    "registry": {
+      "type": "custom",
+      "build": "cargo build --target wasm32-unknown-unknown --package registry --release",
+      "wasm": "target/wasm32-unknown-unknown/release/registry.wasm",
+      "candid": "src/registry/registry.did",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
     },
-    "decentralized-identity-server-frontend": {
-      "dependencies": [
-        "decentralized-identity-server-backend"
-      ],
-      "source": [
-        "src/decentralized-identity-server-frontend/dist"
-      ],
-      "type": "assets",
-      "workspace": "decentralized-identity-server-frontend"
-    }
-  },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
+    "did_shard": {
+      "type": "custom",
+      "build": "cargo build --target wasm32-unknown-unknown --package did_shard --release",
+      "wasm": "target/wasm32-unknown-unknown/release/did_shard.wasm",
+      "candid": "src/did_shard/did_shard.did",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
     }
   },
   "output_env_file": ".env",
