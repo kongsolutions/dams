@@ -1,4 +1,0 @@
-service : {
-    "add_entry": (text) -> ();
-    "get_entries": () -> (vec text) query;
-}

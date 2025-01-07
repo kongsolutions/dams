@@ -1,4 +1,0 @@
-service : {
-    "add_shard": (text) -> ();
-    "get_shards": () -> (vec text) query;
-}

@@ -1,0 +1,20 @@
+type User = record {
+    email: opt text;
+    google_sub: opt text;
+    did: text;
+};
+
+type DIDDocument = record {
+    id: text;
+    verification_method: vec VerificationMethod;
+};
+
+type VerificationMethod = record {
+    id: text;
+    type_: text;
+    public_key_base58: text;
+};
+
+service : {
+    register_user: (opt text, opt text, DIDDocument) -> (text); // email, google_sub, did_document -> result
+}

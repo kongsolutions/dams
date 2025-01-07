@@ -1,21 +1,65 @@
 {
   "canisters": {
-    "registry": {
-      "type": "custom",
-      "build": "cargo build --target wasm32-unknown-unknown --package registry --release",
-      "wasm": "target/wasm32-unknown-unknown/release/registry.wasm",
-      "candid": "src/registry/registry.did",
+    "did_document_registry": {
+      "type": "rust",
+      "main": "canisters/did_document_registry/src/lib.rs",
+      "candid": "canisters/did_document_registry/src/candid.did",
+      "package": "did_document_registry",
       "metadata": [
         {
           "name": "candid:service"
         }
       ]
     },
-    "did_shard": {
-      "type": "custom",
-      "build": "cargo build --target wasm32-unknown-unknown --package did_shard --release",
-      "wasm": "target/wasm32-unknown-unknown/release/did_shard.wasm",
-      "candid": "src/did_shard/did_shard.did",
+    "did_document_shard": {
+      "type": "rust",
+      "main": "canisters/did_document_shard/src/lib.rs",
+      "candid": "canisters/did_document_shard/src/candid.did",
+      "package": "did_document_shard",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
+    },
+    "blockchain_registry": {
+      "type": "rust",
+      "main": "canisters/blockchain_registry/src/lib.rs",
+      "candid": "canisters/blockchain_registry/src/candid.did",
+      "package": "blockchain_registry",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
+    },
+    "blockchain_shard": {
+      "type": "rust",
+      "main": "canisters/blockchain_shard/src/lib.rs",
+      "candid": "canisters/blockchain_shard/src/candid.did",
+      "package": "blockchain_shard",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
+    },
+    "identity_register": {
+      "type": "rust",
+      "main": "canisters/identity_register/src/lib.rs",
+      "candid": "canisters/identity_register/src/candid.did",
+      "package": "identity_register",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
+    },
+    "did_shards": {
+      "type": "rust",
+      "main": "canisters/did_shards/src/lib.rs",
+      "candid": "canisters/did_shards/src/candid.did",
+      "package": "did_shards",
       "metadata": [
         {
           "name": "candid:service"
@@ -24,5 +68,16 @@
     }
   },
   "output_env_file": ".env",
-  "version": 1
+  "version": 1,
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": ""
+    }
+  }
 }

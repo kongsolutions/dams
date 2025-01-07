@@ -1,11 +1,11 @@
 [package]
-name = "did_shard"
+name = "did_document_registry"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_bytes = "0.11"
+serde_json = "1.0"
 ic-cdk = "0.17.1"
 ic-cdk-macros = "0.17.1"
 candid = "0.10.11"
