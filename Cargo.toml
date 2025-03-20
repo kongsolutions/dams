@@ -1,3 +1,0 @@
-[workspace]
-members = ["canisters/did_document_registry", "canisters/did_document_shard"]
-resolver = "2"
