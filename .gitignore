@@ -19,3 +19,36 @@ Cargo.lock
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# Various IDEs and Editors
+.vscode/
+.idea/
+**/*~
+
+# Mac OSX temporary files
+.DS_Store
+**/.DS_Store
+
+# dfx temporary files
+.dfx/
+
+# frontend code
+node_modules/
+dist/
+dist-showcase/
+.env
+lib
+
+# Cargo build output
+target/
+
+# End-to-end test artifacts
+test-failures/
+
+# built canisters
+*.wasm
+*.wasm.gz
+ic-test-state-machine
+pocket-ic
+
+*.tsbuildinfo
