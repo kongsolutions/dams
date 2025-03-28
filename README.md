@@ -56,4 +56,4 @@ In the future, we plan to add **public code examples** here or in separate repos
 
 KONGWallet is being built by a dedicated **full-time team of 6** (1 founder, 5 full-time developers) with expertise in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems.
 
-* **[Martin]** - [CTO/Lead DEV]
+* **Martin** - [CTO/Lead DEV]
