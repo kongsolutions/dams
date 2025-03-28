@@ -11,9 +11,8 @@ Our core backend (DAMS) is being developed on the **Internet Computer (ICP)** us
 **Status:** This project is under **active development**. The core codebase resides in **private feature branches** (in our main development repository on Bitbucket/Private GitHub). This public repository serves as the main information hub and future host for public examples/modules.
 
 **Learn More:**
-* **[KONGWallet Website/Landing Page]([Link to your website])**
-* **[Whitepaper (Draft/v1.0)]([Link to Whitepaper if public])**
-* **[Join our Telegram Community]([Link to Telegram group])**
+* **[KONGWallet Website/Landing Page](https://kongwallet.io/)**
+* **[Follow us in Twitter](https://x.com/kongwallet)**
 
 ## Architecture Overview (Balanced Start - 11 Canisters)
 
