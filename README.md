@@ -64,7 +64,7 @@ The backend architecture follows the expanded v1-Integration model with **16 mai
 
 ## Beta Features (Phase 1)
 
-### I. Account Management and Security (DAMS - Epic 1)
+### I. Account Management and Security
 1. **Registration:** Create non-custodial account via:
    * Email and Password (using SRP)
    * Google account (OAuth)
@@ -78,7 +78,7 @@ The backend architecture follows the expanded v1-Integration model with **16 mai
    * Password Reset (SRP login only): Via email verification (doesn't restore key access)
 7. **Logout:** Ability to exit session
 
-### II. Portfolio Management (Epic 3)
+### II. Portfolio Management
 1. **Dashboard:**
    * Balance overview **for SOL, TON** and related SPL/Jetton tokens
    * Display of amounts and **approximate USD value**
@@ -86,7 +86,7 @@ The backend architecture follows the expanded v1-Integration model with **16 mai
 2. **AI Trending Integration:**
    * Display data for **top 10 trending tokens on Solana network**
 
-### III. Basic Transactions (Epic 2 - SOL & TON)
+### III. Basic Transactions
 1. **Receive:** Display SOL and TON address / QR code
 2. **Send:** Send SOL or TON to:
    * Blockchain address (SOL/TON)
@@ -95,18 +95,18 @@ The backend architecture follows the expanded v1-Integration model with **16 mai
 3. **Local Signing and Broadcasting:** Transactions are signed locally in frontend and broadcast directly from frontend (to drpc.org)
 4. **Status Tracking:** Backend receives hash and tracks; frontend displays basic status (Pending/Confirmed/Failed)
 
-### IV. Swap (Epic 4 - SOL & TON)
+### IV. Swap
 1. **Swap Interfaces:** Quick Swap and Manual Swap (with slippage option)
 2. **Supported Exchanges:**
    * SOL <> SPL tokens (via **Jupiter**)
    * TON <> Jetton tokens (via **STON.fi / Omniston Protocol**)
 3. **Execution:** Get quotes from aggregators; Local signing in frontend; Direct broadcast from frontend; Status tracking
 
-### V. User Experience and Onboarding (Epic 8)
+### V. User Experience and Onboarding
 1. **"Get Started" Tasks:** Display and track completion of tasks: "Backup Seed Phrase", "Receive SOL/TON First Time", "Start Trading (Swap)"
 2. **Interface:** Access via **Mobile Web Browser** and **Telegram Mini-App** (showing Mobile Web interface through basic bot)
 
-### VI. Infrastructure (Epic 7 - Supporting)
+### VI. Infrastructure
 1. **Core Components:** Configured and operational IC canisters, K8s cluster, NestJS microservices (Crypto Manager API), Kong Gateway (with JWT validation), Databases, RabbitMQ, Redis, CI/CD, Monitoring, Logging, drpc.org integration
 
 ## Transition Strategy: Beta to Full Version
