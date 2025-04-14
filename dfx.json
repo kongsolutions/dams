@@ -1,11 +1,67 @@
 {
-  "canisters": {},
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
+  "version": 1,
+  "dfx": "0.24.0",
+  "canisters": {
+    "mig": {
+      "type": "rust",
+      "package": "mig",
+      "candid": "canisters/mig/mig.did"
+    },
+    "ss": {
+      "type": "rust",
+      "package": "ss",
+      "candid": "canisters/ss/ss.did"
+    },
+    "ug": {
+      "type": "rust",
+      "package": "ug",
+      "candid": "canisters/ug/ug.did"
+    },
+    "fam": {
+      "type": "rust",
+      "package": "fam",
+      "candid": "canisters/fam/fam.did"
+    },
+    "ur": {
+      "type": "rust",
+      "package": "ur",
+      "candid": "canisters/ur/ur.did"
+    },
+    "eag": {
+      "type": "rust",
+      "package": "eag",
+      "candid": "canisters/eag/eag.did"
+    },
+    "bam": {
+      "type": "rust",
+      "package": "bam",
+      "candid": "canisters/bam/bam.did"
+    },
+    "ess1": {
+      "type": "rust",
+      "package": "ess",
+      "candid": "canisters/ess/ess.did"
+    },
+    "ess2": {
+      "type": "rust",
+      "package": "ess",
+      "candid": "canisters/ess/ess.did"
+    },
+    "ess3": {
+      "type": "rust",
+      "package": "ess",
+      "candid": "canisters/ess/ess.did"
     }
   },
-  "output_env_file": ".env",
-  "version": 1
+  "defaults": {
+    "build": {
+      "packtool": "cargo"
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8008",
+      "type": "ephemeral"
+    }
+  }
 }

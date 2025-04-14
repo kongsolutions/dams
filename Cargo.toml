@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "canisters/bam", 
-    "canisters/common", "canisters/eag", "canisters/ess", "canisters/fam", "canisters/mig", "canisters/ss", "canisters/ug", "canisters/ur", 
+    "canisters/common", "canisters/eag", "canisters/ess1", "canisters/ess2", "canisters/ess3", "canisters/fam", "canisters/mig", "canisters/ss", "canisters/ug", "canisters/ur", 
     "canisters/utils"]
 
 resolver = "2"
