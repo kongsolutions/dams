@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "canisters/bam", 
+    "canisters/common", "canisters/eag", "canisters/ess", "canisters/fam", "canisters/mig", "canisters/ss", "canisters/ug", "canisters/ur", 
+    "canisters/utils"]
+
+resolver = "2"
