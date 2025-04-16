@@ -8,7 +8,7 @@ This project addresses key Web3 pain points such as the complexity of managing m
 
 Our core backend (DAMS - Decentralized Account Management System) is being developed on the **Internet Computer (ICP)** using **Rust**. It employs innovative approaches like **Client-Side Key Derivation (CSKD)** and **Shamir's Secret Sharing (SSS)** for secure account recovery (RAS - Recovery Account System) and relies on **DID-based Authentication (DID Auth Flow)** for secure access. The v1-Integration architecture focuses on decentralized management of sovereign identities (DID), cryptographic keys, and interaction with blockchain networks through a **unified facade layer** for external integrations. **Account Abstraction (AA)** integration is also planned to optimize fees via the **KONG** token.
 
-**Status:** This project is under **active development**. The core codebase resides in **private feature branches** (in our main development repository on Bitbucket/Private GitHub). This public repository serves as the main information hub and future host for public examples/modules.
+**Status:** This project is under **active development**. The core codebase resides in **private feature branches** (in our main development repository on Bitbucket/Private GitHub). This public repository serves as the main information hub and future host for public modules.
 
 **Learn More:**
 
