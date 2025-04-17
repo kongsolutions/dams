@@ -30,24 +30,19 @@ The backend architecture follows the expanded v1-Integration model with **16 mai
 * `FederatedAccountManager`: Coordinates federated processes (registration, authentication) across systems
 * `ExternalAPIFacade`: Provides a unified internal interface for interacting with all external APIs
 
-### 3. Specific Bridges
-
-* `CryptoManagerBridge`: Specialized bridge for integration with the Crypto Manager API
-* `ExternalAPIBridge`: Specialized bridge for integration with new/Kong AI API
-
-### 4. Cryptographic Services
+### 3. Cryptographic Services
 
 * `ChallengeGeneration`: Generates cryptographic challenges (nonces)
 * `SignatureVerification`: Verifies cryptographic signatures (incl. DID Auth) with caching
 
-### 5. Data Management and Storage
+### 4. Data Management and Storage
 
 * `RegistryDirectory`: Manages and routes to `UserRegistry` shards
 * `StorageDirectory`: Manages and routes to `EncryptedShardStorage` shards
 * `UserRegistry_Shard(s)`: Stores user profiles, DID documents, and public keys (sharded)
 * `EncryptedShardStorage_Shard(s)`: Securely stores encrypted recovery data (SSS shards)
 
-### 6. Core Managers
+### 5. Core Managers
 
 * `SessionManager`: Manages user sessions and authentication levels
 * `BlockchainAccessManager`: Manages links to blockchain addresses and public data
