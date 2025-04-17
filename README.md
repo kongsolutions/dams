@@ -144,6 +144,72 @@ Our transition strategy ensures seamless migration from Beta to the full version
    * Rolling upgrade strategy for sharded components
    * Gradual traffic routing between versions
 
+Here are diagrams illustrating key interaction flows based on the current architecture, including the approach where the Frontend calls external APIs directly after obtaining a JWT from DAMS.
+
+### Login Flow (SRP Example)
+
+This diagram shows how a user logs in using their email/password (SRP) and obtains a session JWT from DAMS.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as Frontend App
+    participant MIG as MIG Canister (DAMS)
+    participant UR as UR Canister (DAMS)
+    participant SS as SS Canister (DAMS)
+
+    U->>FE: Enter email & password
+    FE->>MIG: initiate_srp_login(email) 
+    Note right of MIG: Looks up user/salt via UR (internal)
+    MIG-->>FE: Ok({ challenge, srp_salt })
+    FE->>FE: Calculate SRP Proofs (A, M1)
+    FE->>MIG: validate_srp_login(proofs)
+    Note right of MIG: Verifies proofs via UR (internal)
+    alt SRP Proofs Valid
+        MIG->>SS: create_session(user_did)
+        SS->>SS: (Generate & Sign JWT)
+        SS-->>MIG: Ok(jwt)               
+        MIG-->>FE: Ok({ final_jwt })       
+        FE->>U: Logged in (JWT Stored)
+    else SRP Proofs Invalid
+        MIG-->>FE: Err(LoginError::InvalidCredentials)
+        FE->>U: Show Login Error
+    end
+```
+
+### External API Interaction Flow (Example: Crypto Manager API)
+
+This diagram shows the flow after login. The Frontend calls the external Crypto Manager API directly, passing the DAMS JWT. The Crypto Manager API validates the JWT by fetching the public key from the DAMS Session Server (`SS::get_jwks`).
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant FE as Frontend App
+    participant ExtAPI as External API (e.g., Crypto Mgr)
+    participant SS as SS Canister (DAMS - JWKS Provider)
+    participant DAMS_Other as Other DAMS Canister (e.g., BAM - Optional)
+    participant Chain as Blockchain/Explorer
+
+    U->>FE: Request Action (e.g., Get Balance)
+    FE->>ExtAPI: API Call (e.g., /balance) + DAMS JWT  # Премахнат +
+    ExtAPI->>SS: get_jwks() <br/> (To fetch public key for JWT verification) # Премахнат +
+    SS-->>ExtAPI: JWKS Response (incl. Public Key) # Премахнат -
+    ExtAPI->>ExtAPI: Validate DAMS JWT (Signature, iss, aud, exp) using fetched Public Key
+    alt JWT is Valid
+        Note right of ExtAPI: Extract user_did from JWT 'sub' claim
+        opt External API needs more data from DAMS
+            ExtAPI->>DAMS_Other: Call DAMS (e.g., BAM.get_addresses) <br/> (using user_did, potentially backend API Key) # Премахнат +
+            DAMS_Other-->>ExtAPI: Requested Data (e.g., addresses) # Премахнат -
+        end
+        ExtAPI->>ExtAPI: Perform its core logic (e.g., query blockchain)
+        ExtAPI-->>FE: Ok (Requested Data - e.g., Balances) # Премахнат -
+        FE->>U: Display Data
+    else JWT is Invalid
+        ExtAPI-->>FE: Error (e.g., 401 Unauthorized) # Премахнат -
+        FE->>U: Show Error / Request Re-Login
+    end
+```
+
 ## Current Status and Progress (Q2 2025)
 
 * The DAMS backend is under active development on ICP/Rust (in private branches)
@@ -154,7 +220,7 @@ See our full [Roadmap](https://kongwallet.io/#roadmap) for more details.
 
 ## Team
 
-KONGWallet is being built by a dedicated **full-time team of 6** (1 founder, 4 full-time developers) with expertise in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems.
+KONGWallet is being built by a dedicated **full-time team of 5** (1 founder, 1 senior designer, part fime and 3 full-time developers, with expertise in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems).
 
 
 * Martin - [Lead DEV]
