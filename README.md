@@ -209,7 +209,7 @@ sequenceDiagram
 
 * The DAMS backend is under active development on ICP/Rust (in private branches)
 * **Milestones Achieved (Q1 2025):** Mobile Web v1 UI, Initial Solana & TON integration (core functions), AI Trending engine (Solana) built, Landing Page launched, Core DAMS implementation started, Initial DEX integration research/work started, Telegram login integration started
-* **Next Steps (Q2 2025):** Finalizing and stabilizing DAMS/RAS implementation (**TOP PRIORITY**), Launching Telegram Mini-App (Beta), Publishing Whitepaper (Draft), **Launching Closed Beta (Target: End of Q2/Begining of Q3)**
+* **Next Steps (Q2 2025):** Finalizing and stabilizing DAMS/RAS implementation (**TOP PRIORITY**), Launching Telegram Mini-App (Beta), Publishing Whitepaper (Draft), **Launching Closed Alpha (Target: End of Q2/Begining of Q3)**
 
 See our full [Roadmap](https://kongwallet.io/#roadmap) for more details.
 
