@@ -1,4 +1,4 @@
-# KONGWallet - Decentralized Account Management System (DAMS)
+# KONG Wallet - Decentralized Account Management System (DAMS)
 
 ## Introduction
 
