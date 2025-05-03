@@ -1,149 +1,180 @@
-# KONG Wallet - Decentralized Account Management System (DAMS)
+# KONG Wallet – Decentralized Account Management System (DAMS)
 
 ## Introduction
 
-Welcome to the primary repository hub for KONGWallet! KONGWallet is a next-generation decentralized crypto wallet built with the clear goal of making digital asset management easy, secure, and accessible for everyone, without sacrificing decentralization or user control.
+Welcome to the official repository of KONGWallet! KONGWallet is a next-generation crypto wallet, developed with the clear goal of making digital asset management easy, secure, and accessible to everyone—without compromising on decentralization or user control.
 
-This project addresses key Web3 pain points such as the complexity of managing multiple wallets/chains, high and unpredictable gas fees, and the barriers to mainstream adoption.
+The project addresses key Web3 challenges such as the complexity of managing multiple wallets/blockchains, high and unpredictable fees, and barriers to mass adoption.
 
-Our core backend (DAMS - Decentralized Account Management System) is being developed on the **Internet Computer (ICP)** using **Rust**. It employs innovative approaches like **Client-Side Key Derivation (CSKD)** and **Shamir's Secret Sharing (SSS)** for secure account recovery (RAS - Recovery Account System) and relies on **DID-based Authentication (DID Auth Flow)** for secure access. The v1-Integration architecture focuses on decentralized management of sovereign identities (DID), cryptographic keys, and interaction with blockchain networks through a **unified facade layer** for external integrations. **Account Abstraction (AA)** integration is also planned to optimize fees via the **KONG** token.
+Our core backend (DAMS – Decentralized Account Management System) is being developed on the Internet Computer (ICP) using Rust. It incorporates innovative techniques such as Client-Side Key Derivation (CSKD) and Verifiable Secret Sharing (VSS) to enable secure account recovery with a 3-of-5 threshold scheme, and leverages DID-based authentication (DID Auth Flow) for secure access.
 
-**Status:** This project is under **active development**. The core codebase resides in **private feature branches** (in our main development repository on Bitbucket). This public repository serves as the main information hub and future host for public modules.
+## Status: Beta Version
 
-**Learn More:**
+The project is currently in active beta development with the following core features and components:
 
-* **[KONGWallet Website](https://kongwallet.io/)**
-* **[Follow us on Twitter](https://x.com/kongwallet)**
+### Beta Architecture Overview
 
-## Architecture Overview (v1-Integration)
+Our Beta architecture focuses on the following primary Internet Computer canisters:
 
-The backend architecture follows the expanded v1-Integration model with **16 main canister types**, organized into logical layers and optimized for security, scalability, and integration:
+- **FAM** (FederatedAccountManager): User profile and identity management
+- **UR** (UserRegistry): SRP data and account information management
+- **SS** (SessionManager): Session, JWT, and JWKS management
+- **MIG** (MainIntegrationGateway): Main entry point for registration and login
+- **UG** (UserGateway): Secure gateway with JWT validation
+- **EAG** (ExternalAPIGateway): Secure API calls to external networks
+- **BAM** (BlockchainAccessManager): Blockchain account address management
+- **ESS** (EncryptedShardStorage): Encrypted storage of sensitive data (x3 shards)
+- **SNS** (SolanaNameServiceManager): Domain and subdomain management for VSS shards
+- **CER** (CeramicManager): Integration with Ceramic Network for VSS shards
+- **IPM** (IPFSManager): Integration with IPFS for VSS shards
 
-### 1. Entry Points (Gateways)
+### Innovative 3-of-5 VSS Security
 
-* `MainIntegrationGateway`: Main entry point for request distribution
-* `UserGateway`: Specialized for handling end-user requests and flows
-* `ExternalAPIGateway`: Entry point for external B2B clients targeting integrated APIs
+KONGWallet introduces a revolutionary system for protecting crypto assets through decentralized distribution of VSS shards across five distinct locations:
 
-### 2. Coordination and Integration Facade
+- Utilizes a 3-of-5 threshold scheme for maximum security and flexibility
+- Shards are distributed across various decentralized networks and locations
+- Each shard is encrypted with a unique cryptographic key
+- Recovery is possible with any 3 out of the 5 shards
 
-* `FederatedAccountManager`: Coordinates federated processes (registration, authentication) across systems
-* `ExternalAPIFacade`: Provides a unified internal interface for interacting with all external APIs
+This architecture ensures true decentralization and robust security while allowing access recovery in various loss or compromise scenarios.
 
-### 3. Cryptographic Services
+## Tech Stack
 
-* `ChallengeGeneration`: Generates cryptographic challenges (nonces)
-* `SignatureVerification`: Verifies cryptographic signatures (incl. DID Auth) with caching
+- **Blockchain**: Internet Computer (ICP), Solana
+- **Language (Canisters)**: Rust
+- **Interfaces**: Candid
+- **Storage**: ic-stable-structures, Ceramic Network, IPFS, Solana Name Service
+- **Cryptography**: Ed25519, Argon2id (OWASP parameters), SHA-512, VSS instead of SSS
+- **Key Concepts**: Decentralized Identifiers (DID), DID-based authentication, Client-Side Key Derivation (CSKD), Verifiable Secret Sharing (VSS), Multi-Chain Integration, External API Facade, Account Abstraction (AA – planned)
 
-### 4. Data Management and Storage
+## Beta Features
 
-* `RegistryDirectory`: Manages and routes to `UserRegistry` shards
-* `StorageDirectory`: Manages and routes to `EncryptedShardStorage` shards
-* `UserRegistry_Shard(s)`: Stores user profiles, DID documents, and public keys (sharded)
-* `EncryptedShardStorage_Shard(s)`: Securely stores encrypted recovery data (SSS shards)
+### I. Account Management & Security
 
-### 5. Core Managers
+**Registration**: Create a non-custodial account via:
+- Email & Password (using SRP)
+- Google Account (OAuth)
+- Telegram Account (OAuth / Login Widget)
 
-* `SessionManager`: Manages user sessions and authentication levels
-* `BlockchainAccessManager`: Manages links to blockchain addresses and public data
-* `SecurityServices`: Consolidated services for audit logs, monitoring, and account recovery (RAS)
+**Seed Phrase**: Generated during registration; revealed for backup after first login (as part of onboarding)
 
-## Technology Stack
+**VSS Security**: 3-of-5 threshold scheme with shard distribution for maximum protection
 
-* **Blockchain:** Internet Computer (ICP)
-* **Language (Canisters):** Rust
-* **Interfaces:** Candid
-* **Storage:** Stable Structures
-* **Cryptography:** Ed25519, Argon2id, SHA-256
-* **Key Concepts:** Decentralized Identifiers (DID), DID-based Authentication, Client-Side Key Derivation (CSKD), Shamir's Secret Sharing (SSS), Recovery Account System (RAS), Multi-Chain Integration, External API Facade, Account Abstraction (AA - planned), Http Outcalls
+**Login**: Via Email/Password (SRP), Google, or Telegram; secure retrieval of VSS shards; local decryption and VSS reconstruction of Seed Phrase in frontend
 
-## Beta Features (Phase 1)
+**API Access Token**: Automatically retrieved JWT token after successful login/registration for accessing Crypto Manager API
 
-### I. Account Management and Security
-1. **Registration:** Create non-custodial account via:
-   * Email and Password (using SRP)
-   * Google account (OAuth)
-   * Telegram account (OAuth / Login Widget)
-2. **Seed Phrase:** Generated during registration; Displayed for backup after first login (part of Onboarding)
-3. **Internal Storage:** SSS splitting into 3 shards, encryption with KDF key (from Password/PIN+Salt), storage of encrypted shards on IC
-4. **Login:** Sign in with Email/Password (SRP), Google, or Telegram; Retrieve 2 encrypted shards + salt from IC; Local decryption and SSS reconstruction of Seed Phrase in frontend
-5. **API Access Token:** Automatic JWT token retrieval after successful login/registration for Crypto Manager API access
-6. **Account Recovery (RAS):**
-   * Primary method: By entering **complete Seed Phrase + 2FA** verification
-   * Password Reset (SRP login only): Via email verification (doesn't restore key access)
-7. **Logout:** Ability to exit session
+**Account Recovery**:
+- Primary method: Using any combination of 3 VSS shards + 2FA verification
+- Password reset (SRP only): Via email verification (does not recover private keys)
+
+**Logout**: Session termination available
 
 ### II. Portfolio Management
-1. **Dashboard:**
-   * Balance overview **for SOL, TON** and related SPL/Jetton tokens
-   * Display of amounts and **approximate USD value**
-   * Display of total portfolio value in USD
-2. **AI Trending Integration:**
-   * Display data for **top 10 trending tokens on Solana network**
 
-### III. Basic Transactions
-1. **Receive:** Display SOL and TON address / QR code
-2. **Send:** Send SOL or TON to:
-   * Blockchain address (SOL/TON)
-   * Registered Email in KONGWallet
-   * Registered Telegram username in KONGWallet
-3. **Local Signing and Broadcasting:** Transactions are signed locally in frontend and broadcast directly from frontend (to drpc.org)
-4. **Status Tracking:** Backend receives hash and tracks; frontend displays basic status (Pending/Confirmed/Failed)
+**Dashboard**:
+- Balance overview for SOL, TON, and connected SPL/Jetton tokens
+- Display of individual amounts and approximate USD values
+- Display of total portfolio value in USD
 
-### IV. Swap
-1. **Swap Interfaces:** Quick Swap and Manual Swap (with slippage option)
-2. **Supported Exchanges:**
-   * SOL <> SPL tokens (via **Jupiter**)
-   * TON <> Jetton tokens (via **STON.fi / Omniston Protocol**)
-3. **Execution:** Get quotes from aggregators; Local signing in frontend; Direct broadcast from frontend; Status tracking
+**AI Trending Integration**:
+- View top 10 trending tokens in the Solana network
 
-### V. User Experience and Onboarding
-1. **"Get Started" Tasks:** Display and track completion of tasks: "Backup Seed Phrase", "Receive SOL/TON First Time", "Start Trading (Swap)"
-2. **Interface:** Access via **Mobile Web Browser** and **Telegram Mini-App** (showing Mobile Web interface through basic bot)
+### III. Core Transactions
 
-### VI. Infrastructure
-1. **Core Components:** Configured and operational IC canisters, K8s cluster, NestJS microservices (Crypto Manager API), Kong Gateway (with JWT validation), Databases, RabbitMQ, Redis, CI/CD, Monitoring, Logging, drpc.org integration
+**Receive**: Display SOL and TON address / QR code
 
-## Transition Strategy: Beta to Full Version
+**Send**: Transfer SOL or TON to:
+- Blockchain address (SOL/TON)
+- Registered email in KONGWallet
+- Registered Telegram username in KONGWallet
 
-Our transition strategy ensures seamless migration from Beta to the full version through:
+**Local Signing & Broadcasting**: Transactions signed locally in frontend and broadcasted directly from frontend (via drpc.org)
 
-1. **Architecture Preparation in Beta Phase**
-   * Versioned API interfaces
-   * Abstract layers for components that will change
-   * Clean separation of business logic from protocol-specific logic
+**Status Tracking**: Backend receives transaction hash and monitors status; frontend displays status (Pending/Confirmed/Failed)
 
-2. **Phased Sharding Implementation**
-   * Preparation for sharding with directory mechanisms
-   * Gradual introduction of dedicated directory canisters
-   * Progressive data redistribution during scaling
+### IV. Swaps
 
-3. **Phased Security Feature Implementation**
-   * Infrastructure preparation between Beta and full version
-   * WebAuthn/Passkeys as optional method first, then required for new registrations
-   * Enhanced recovery system with Time Lock and social recovery
+**Swap Interfaces**: Quick swap and manual swap (with slippage option)
 
-4. **Data Migration and Compatibility**
-   * Version flags in user records
-   * Group-based user migration
-   * Backward compatibility during transition
-   * "Double-write" during transition phase
+**Supported DEXes**:
+- SOL <> SPL tokens (via Jupiter)
+- TON <> Jetton tokens (via STON.fi / Omniston Protocol)
 
-5. **Canister Expansion Plan**
-   * Phase 1: After Beta stabilization (10-12 canisters)
-   * Phase 2: Full implementation (14-16 canisters)
-   * Monitoring and scaling based on defined thresholds
+**Execution**: Quote fetching from aggregators; local signing; direct broadcast from frontend; status tracking
 
-6. **Zero Downtime Techniques**
-   * "Dual canister" technique for seamless updates
-   * Rolling upgrade strategy for sharded components
-   * Gradual traffic routing between versions
+### V. UX & Onboarding
+
+**"Getting Started" Tasks**: Display and track task progress: "Backup Seed Phrase", "Receive SOL/TON for the first time", "Make your first Swap"
+
+**Interface**: Accessible via mobile web browser and Telegram Mini-App (displays mobile web UI via main bot)
+
+**VSS Shard UI**: Visualize shard status and access recovery tools
+
+### VI. Scalability & Security
+
+**Architecture for Millions**: Sharded system for efficient scaling and user servicing
+
+**Decentralized Storage**: VSS shards distributed across independent locations
+
+**Layered Security**: Each shard encrypted with a unique key
+
+**Flexible Recovery**: Multiple recovery paths via various shard combinations
+
+## Current Status & Progress (Q2 2025)
+
+- DAMS backend in active development on ICP/Rust
+- 3-of-5 VSS integration underway
+- Testing in progress with decentralized networks (Ceramic, IPFS, SNS)
+
+**Milestones Achieved (Q1 2025)**: Mobile Web v1 UI, initial Solana & TON integration (core features), AI Trending engine built (Solana), landing page launched, core DAMS implementation started
+
+**Next Steps (Q2 2025)**: Finalize and stabilize DAMS & VSS implementation (TOP PRIORITY), launch Telegram Mini-App (Beta), publish Whitepaper (Draft), initiate Closed Alpha (Target: End of Q2/Start of Q3)
+
+## Transition from Beta to Full Version
+
+Our strategy for transitioning from Beta to full release includes:
+
+**Beta Architecture Preparation**:
+- Versioned API interfaces
+- Abstracted layers for evolving components
+- Clear separation of business and protocol-specific logic
+
+**Phased Sharding Implementation**:
+- Directory mechanisms for future sharding
+- Gradual deployment of specialized directory canisters
+- Progressive data redistribution during scaling
+
+**Phased Security Enhancements**:
+- Infrastructure prep for post-Beta security features
+- WebAuthn/Passkeys as optional, then mandatory for new accounts
+- Enhanced recovery system with Time Lock & Social Recovery
+
+**Data Migration & Compatibility**:
+- Version flags in user records
+- Batch user migrations
+- Backward compatibility during transition
+- "Dual writing" approach during migration phase
+
+## Team
+
+KONGWallet is built by a dedicated full-time team of 5 people (1 founder, 1 part-time senior designer, and 3 full-time developers with experience in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems).
+
+Martin – [Lead DEV]
+
+## Learn More:
+
+- [KONGWallet Website](https://kongwallet.io/)
+- [Follow us on Twitter](https://x.com/kongwallet)
+- [Telegram Community](#) (Coming Soon)
+- [Whitepaper](#) (Coming Soon)
+
+## Architecture Diagrams
 
 Here are diagrams illustrating key interaction flows based on the current architecture, including the approach where the Frontend calls external APIs directly after obtaining a JWT from DAMS.
 
 ### Login Flow (SRP Example)
-
-This diagram shows how a user logs in using their email/password (SRP) and obtains a session JWT from DAMS.
 
 ```mermaid
 sequenceDiagram
@@ -174,8 +205,6 @@ sequenceDiagram
 
 ### External API Interaction Flow (Example: Crypto Manager API)
 
-This diagram shows the flow after login. The Frontend calls the external Crypto Manager API directly, passing the DAMS JWT. The Crypto Manager API validates the JWT by fetching the public key from the DAMS Session Server (`SS::get_jwks`).
-
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -186,36 +215,23 @@ sequenceDiagram
     participant Chain as Blockchain/Explorer
 
     U->>FE: Request Action (e.g., Get Balance)
-    FE->>ExtAPI: API Call (e.g., /balance) + DAMS JWT  # Премахнат +
-    ExtAPI->>SS: get_jwks() <br/> (To fetch public key for JWT verification) # Премахнат +
-    SS-->>ExtAPI: JWKS Response (incl. Public Key) # Премахнат -
+    FE->>ExtAPI: API Call (e.g., /balance) with DAMS JWT
+    ExtAPI->>SS: get_jwks() (To fetch public key for JWT verification)
+    SS-->>ExtAPI: JWKS Response (incl. Public Key)
     ExtAPI->>ExtAPI: Validate DAMS JWT (Signature, iss, aud, exp) using fetched Public Key
     alt JWT is Valid
         Note right of ExtAPI: Extract user_did from JWT 'sub' claim
         opt External API needs more data from DAMS
-            ExtAPI->>DAMS_Other: Call DAMS (e.g., BAM.get_addresses) <br/> (using user_did, potentially backend API Key) # Премахнат +
-            DAMS_Other-->>ExtAPI: Requested Data (e.g., addresses) # Премахнат -
+            ExtAPI->>DAMS_Other: Call DAMS (e.g., BAM.get_addresses) using user_did, potentially with backend API Key
+            DAMS_Other-->>ExtAPI: Requested Data (e.g., addresses)
         end
         ExtAPI->>ExtAPI: Perform its core logic (e.g., query blockchain)
-        ExtAPI-->>FE: Ok (Requested Data - e.g., Balances) # Премахнат -
+        ExtAPI-->>FE: Ok (Requested Data - e.g., Balances)
         FE->>U: Display Data
     else JWT is Invalid
-        ExtAPI-->>FE: Error (e.g., 401 Unauthorized) # Премахнат -
+        ExtAPI-->>FE: Error (e.g., 401 Unauthorized)
         FE->>U: Show Error / Request Re-Login
     end
 ```
 
-## Current Status and Progress (Q2 2025)
-
-* The DAMS backend is under active development on ICP/Rust (in private branches)
-* **Milestones Achieved (Q1 2025):** Mobile Web v1 UI, Initial Solana & TON integration (core functions), AI Trending engine (Solana) built, Landing Page launched, Core DAMS implementation started, Initial DEX integration research/work started, Telegram login integration started
-* **Next Steps (Q2 2025):** Finalizing and stabilizing DAMS/RAS implementation (**TOP PRIORITY**), Launching Telegram Mini-App (Beta), Publishing Whitepaper (Draft), **Launching Closed Alpha (Target: End of Q2/Begining of Q3)**
-
-See our full [Roadmap](https://kongwallet.io/#roadmap) for more details.
-
-## Team
-
-KONGWallet is being built by a dedicated **full-time team of 5** (1 founder, 1 senior designer, part fime and 3 full-time developers, with expertise in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems).
-
-
-* Martin - [Lead DEV]
+© 2025 KONG Wallet. All rights reserved.
