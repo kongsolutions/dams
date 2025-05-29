@@ -6,231 +6,184 @@ Welcome to the official repository of KONGWallet! KONGWallet is a next-generatio
 
 The project addresses key Web3 challenges such as the complexity of managing multiple wallets/blockchains, high and unpredictable fees, and barriers to mass adoption.
 
-Our core backend (DAMS – Decentralized Account Management System) is being developed on the Internet Computer (ICP) using Rust. It incorporates innovative techniques such as Client-Side Key Derivation (CSKD) and Verifiable Secret Sharing (VSS) to enable secure account recovery with a 3-of-5 threshold scheme, and leverages DID-based authentication (DID Auth Flow) for secure access.
+Our core backend (DAMS – Decentralized Account Management System) is being developed on the Internet Computer (ICP) using Rust. It incorporates innovative techniques such as a sharded architecture for scalability, the Atomic Saga Pattern for consistent transactions, and Verifiable Secret Sharing (VSS) for secure account recovery via a 3-of-5 threshold scheme. DAMS provides Decentralized Identity (DID) and issues JWTs for secure access to integrated services.
 
-## Status: Beta Version
+## Status: Beta Version Development
 
-The project is currently in active beta development with the following core features and components:
+The project is currently in active beta development, focusing on the following core features and components:
 
 ### Beta Architecture Overview
 
-Our Beta architecture focuses on the following primary Internet Computer canisters:
+The DAMS Beta architecture is built on the Internet Computer and features the following main canister types, designed for sharding and scalability:
 
-- **FAM** (FederatedAccountManager): User profile and identity management
-- **UR** (UserRegistry): SRP data and account information management
-- **SS** (SessionManager): Session, JWT, and JWKS management
-- **MIG** (MainIntegrationGateway): Main entry point for registration and login
-- **UG** (UserGateway): Secure gateway with JWT validation
-- **EAG** (ExternalAPIGateway): Secure API calls to external networks
-- **BAM** (BlockchainAccessManager): Blockchain account address management
-- **ESS** (EncryptedShardStorage): Encrypted storage of sensitive data (x3 shards)
-- **SNS** (SolanaNameServiceManager): Domain and subdomain management for VSS shards
-- **CER** (CeramicManager): Integration with Ceramic Network for VSS shards
-- **IPM** (IPFSManager): Integration with IPFS for VSS shards
+-   **MIG Router (Main Integration Gateway Router)**: A stateless entry point and router that directs requests to the appropriate `MIG_SHARD`.
+-   **MIG Shard (Main Integration Gateway Shard)**: A sharded canister that handles the business logic for registrations, logins, account linking, and orchestrates Atomic Saga transactions.
+-   **FAM Shard (Federated Account Manager Shard)**: Sharded storage for user profiles, linked social accounts, and email hashes (for uniqueness checks).
+-   **UR Shard (User Registry Shard)**: Sharded storage for SRP data (salt, verifier).
+-   **BAM Shard (Blockchain Access Manager Shard)**: Sharded storage for blockchain addresses associated with user DIDs. Data from BAM Shard (and FAM Shard) will be accessible by the external Crypto Manager API via DAMS tokens.
+-   **DDC Shard (DID Document Canister Shard)**: Sharded storage for public DID documents.
+-   **ESS Shard (Encrypted Shard Storage Shard)**: Sharded storage for the two DAMS-managed encrypted VSS shares (indices 1 and 2 of the 3-of-5 scheme).
+-   **SS Cluster (Session Service Cluster)**: Manages sessions, issues, and validates JWT access and refresh tokens. **Provides a public JWKS endpoint for token validation by external APIs.**
+-   **UG (User Gateway)**: A JWT-protected API gateway for requests from authenticated users to their data and DAMS functions. **It will also provide endpoints for authorized access by external services (Crypto Manager API, AI Assistant) to public user data (profile, addresses) using DAMS tokens.**
+-   **EAG (External API Gateway)**: Manages secure communication with external services, including OAuth providers (Google, Telegram). **It will also handle outbound requests to the external Crypto Manager API and AI Assistant if DAMS needs to initiate such communication.**
 
-### Innovative 3-of-5 VSS Security
+*The remaining VSS shares (indices 0, 3, 4) are client-managed and stored on the user's local device, Ceramic Network, and IPFS. DAMS does not directly interact with these client-side stores.*
 
-KONGWallet introduces a revolutionary system for protecting crypto assets through decentralized distribution of VSS shards across five distinct locations:
+### Innovative 3-of-5 VSS Security (Client-Orchestrated)
 
-- Utilizes a 3-of-5 threshold scheme for maximum security and flexibility
-- Shards are distributed across various decentralized networks and locations
-- Each shard is encrypted with a unique cryptographic key
-- Recovery is possible with any 3 out of the 5 shards
+KONGWallet utilizes a 3-of-5 VSS scheme for account recovery, where the user manages the generation of shares. DAMS securely stores two of these shares (indices 1 and 2) in encrypted form within the `ESS Shards` on the Internet Computer.
 
-This architecture ensures true decentralization and robust security while allowing access recovery in various loss or compromise scenarios.
+-   Utilizes a 3-of-5 threshold scheme for maximum security and flexibility.
+-   The client distributes the other 3 shares to user-chosen locations (local, Ceramic, IPFS).
+-   Recovery is possible with any 3 out of the 5 shares and is performed client-side.
+
+This architecture ensures decentralization and robust security while allowing for access recovery.
 
 ## Tech Stack
 
-- **Blockchain**: Internet Computer (ICP), Solana
-- **Language (Canisters)**: Rust
-- **Interfaces**: Candid
-- **Storage**: ic-stable-structures, Ceramic Network, IPFS, Solana Name Service
-- **Cryptography**: Ed25519, Argon2id (OWASP parameters), SHA-512, VSS instead of SSS
-- **Key Concepts**: Decentralized Identifiers (DID), DID-based authentication, Client-Side Key Derivation (CSKD), Verifiable Secret Sharing (VSS), Multi-Chain Integration, External API Facade, Account Abstraction (AA – planned)
+-   **Blockchain (DAMS Backend)**: Internet Computer (ICP)
+-   **Language (Canisters)**: Rust
+-   **Interfaces**: Candid
+-   **Storage (DAMS Backend)**: `ic-stable-structures`
+-   **Cryptography**: Ed25519 (for IC identity), Argon2id (for KDF with SRP), SHA-256/SHA-512, VSS.
+-   **Key Concepts**: Decentralized Identifiers (DID), Atomic Saga Pattern, Sharding, Consistent Hashing, JWT, JWKS, OAuth 2.0, External API Integration.
 
 ## Beta Features
 
-### I. Account Management & Security
+### I. Account Management & Security (DAMS Core)
 
-**Registration**: Create a non-custodial account via:
-- Email & Password (using SRP)
-- Google Account (OAuth)
-- Telegram Account (OAuth / Login Widget)
+-   **Registration**: Create a non-custodial DAMS account via:
+    -   Email & Password (using SRP, atomic saga)
+    -   Google Account (OAuth)
+    -   Telegram Account (OAuth)
+-   **Email Uniqueness**: Guaranteed during registration.
+-   **IC Principal**: Generated from the client's seed phrase, serves as the primary identifier.
+-   **VSS Security**: 3-of-5 threshold scheme, with 2 shares managed by DAMS on the IC.
+-   **Login**: Via Email/Password (SRP), Google, or Telegram.
+-   **Account Linking**: Ability to link Google/Telegram accounts to an existing DAMS DID.
+-   **Session Tokens (JWT)**: Automatic retrieval of access and refresh tokens after successful login/registration, issued by the `SS_CLUSTER`. **These tokens will be used for authentication with the external Crypto Manager API and AI Assistant.**
+-   **Account Recovery**: Primarily through a combination of 3 VSS shares (client-orchestrated).
 
-**Seed Phrase**: Generated during registration; revealed for backup after first login (as part of onboarding)
+### II. Integration with External Services (for Beta)
 
-**VSS Security**: 3-of-5 threshold scheme with shard distribution for maximum protection
+-   **Crypto Manager API Integration**:
+    -   DAMS will serve as an Identity Provider (IdP), issuing JWTs for accessing an **external Crypto Manager API**.
+    -   The external Crypto Manager API will validate DAMS tokens using a **JWKS endpoint** provided by DAMS.
+    -   The external Crypto Manager API will be able to fetch (and cache) **public user profiles and linked blockchain addresses** from DAMS (via the `UG`), using the user's DAMS token for authorization.
+    -   DAMS will **not** directly perform low-level crypto asset management operations; this is the responsibility of the external Crypto Manager API.
+-   **AI Assistant Integration**:
+    -   A similar integration pattern where DAMS provides identity and authorized data access for an **external AI Assistant**.
 
-**Login**: Via Email/Password (SRP), Google, or Telegram; secure retrieval of VSS shards; local decryption and VSS reconstruction of Seed Phrase in frontend
+*(Note: The specific functionalities of the external Crypto Manager API and AI Assistant are outside the scope of DAMS core development. DAMS provides the identity, authentication, authorization, and data-access layer for them.)*
 
-**API Access Token**: Automatically retrieved JWT token after successful login/registration for accessing Crypto Manager API
+### III. Architectural Qualities
 
-**Account Recovery**:
-- Primary method: Using any combination of 3 VSS shards + 2FA verification
-- Password reset (SRP only): Via email verification (does not recover private keys)
-
-**Logout**: Session termination available
-
-### II. Portfolio Management
-
-**Dashboard**:
-- Balance overview for SOL, TON, and connected SPL/Jetton tokens
-- Display of individual amounts and approximate USD values
-- Display of total portfolio value in USD
-
-**AI Trending Integration**:
-- View top 10 trending tokens in the Solana network
-
-### III. Core Transactions
-
-**Receive**: Display SOL and TON address / QR code
-
-**Send**: Transfer SOL or TON to:
-- Blockchain address (SOL/TON)
-- Registered email in KONGWallet
-- Registered Telegram username in KONGWallet
-
-**Local Signing & Broadcasting**: Transactions signed locally in frontend and broadcasted directly from frontend (via drpc.org)
-
-**Status Tracking**: Backend receives transaction hash and monitors status; frontend displays status (Pending/Confirmed/Failed)
-
-### IV. Swaps
-
-**Swap Interfaces**: Quick swap and manual swap (with slippage option)
-
-**Supported DEXes**:
-- SOL <> SPL tokens (via Jupiter)
-- TON <> Jetton tokens (via STON.fi / Omniston Protocol)
-
-**Execution**: Quote fetching from aggregators; local signing; direct broadcast from frontend; status tracking
-
-### V. UX & Onboarding
-
-**"Getting Started" Tasks**: Display and track task progress: "Backup Seed Phrase", "Receive SOL/TON for the first time", "Make your first Swap"
-
-**Interface**: Accessible via mobile web browser and Telegram Mini-App (displays mobile web UI via main bot)
-
-**VSS Shard UI**: Visualize shard status and access recovery tools
-
-### VI. Scalability & Security
-
-**Architecture for Millions**: Sharded system for efficient scaling and user servicing
-
-**Decentralized Storage**: VSS shards distributed across independent locations
-
-**Layered Security**: Each shard encrypted with a unique key
-
-**Flexible Recovery**: Multiple recovery paths via various shard combinations
+-   **Scalability**: Sharded system designed for millions of users.
+-   **Atomicity**: Saga pattern for reliable multi-step operations.
+-   **Reliability**: Idempotency, Circuit Breakers, Retry Logic.
+-   **Security**: Defense in Depth, Principle of Least Privilege.
 
 ## Current Status & Progress (Q2 2025)
 
-- DAMS backend in active development on ICP/Rust
-- 3-of-5 VSS integration underway
-- Testing in progress with decentralized networks (Ceramic, IPFS, SNS)
+-   DAMS backend is in active development on ICP/Rust, focusing on **Epic 1 (Core Sharding & Logic)** and **Epic 2 (Full Storage Sharding & Saga)**.
+-   The foundations of the `dams-shared` library and the `MIG_ROUTER` canister have been implemented.
+-   The `MIG_SHARD` canister, with its saga and idempotency logic, is currently under development.
+-   Integrations with the external Crypto Manager API and AI Assistant have been designed.
 
-**Milestones Achieved (Q1 2025)**: Mobile Web v1 UI, initial Solana & TON integration (core features), AI Trending engine built (Solana), landing page launched, core DAMS implementation started
-
-**Next Steps (Q2 2025)**: Finalize and stabilize DAMS & VSS implementation (TOP PRIORITY), launch Telegram Mini-App (Beta), publish Whitepaper (Draft), initiate Closed Alpha (Target: End of Q2/Start of Q3)
-
-## Transition from Beta to Full Version
-
-Our strategy for transitioning from Beta to full release includes:
-
-**Beta Architecture Preparation**:
-- Versioned API interfaces
-- Abstracted layers for evolving components
-- Clear separation of business and protocol-specific logic
-
-**Phased Sharding Implementation**:
-- Directory mechanisms for future sharding
-- Gradual deployment of specialized directory canisters
-- Progressive data redistribution during scaling
-
-**Phased Security Enhancements**:
-- Infrastructure prep for post-Beta security features
-- WebAuthn/Passkeys as optional, then mandatory for new accounts
-- Enhanced recovery system with Time Lock & Social Recovery
-
-**Data Migration & Compatibility**:
-- Version flags in user records
-- Batch user migrations
-- Backward compatibility during transition
-- "Dual writing" approach during migration phase
+**Next Steps (Q2-Q3 2025)**: Finalize the Email/SRP registration and login flow in DAMS, implement the `SS_CLUSTER` with JWKS, the `UG` with API endpoints for external services, and the `EAG` for integrations. Prepare for testing these core functionalities.
 
 ## Team
 
-KONGWallet is built by a dedicated full-time team of 5 people (1 founder, 1 part-time senior designer, and 3 full-time developers with experience in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems).
+*KONGWallet is built by a dedicated full-time team of 5 people (1 founder, 1 part-time senior designer, and 3 full-time developers with experience in Rust, Frontend (React Native/React/Next.JS), Backend (Nest.JS, Typescript), ML, and secure systems).*
 
-Martin – [Lead DEV]
+*Martin – [Lead DEV]*
 
 ## Learn More:
 
-- [KONGWallet Website](https://kongwallet.io/)
-- [Follow us on Twitter](https://x.com/kongwallet)
-- [Telegram Community](#) (Coming Soon)
-- [Whitepaper](#) (Coming Soon)
+-   [KONGWallet Website](https://kongwallet.io/)
+-   [Follow us on Twitter](https://x.com/kongwallet)
+-   [Telegram Community](#) (Coming Soon)
+-   [Whitepaper](#) (Coming Soon)
 
 ## Architecture Diagrams
 
-Here are diagrams illustrating key interaction flows based on the current architecture, including the approach where the Frontend calls external APIs directly after obtaining a JWT from DAMS.
+Here are diagrams illustrating key interaction flows based on the current architecture, including the approach where client applications interact with DAMS for authentication and then use DAMS-issued tokens to interact with external APIs, which in turn may fetch necessary user data from DAMS.
 
-### Login Flow (SRP Example)
+### Login Flow (SRP Example - DAMS Internal)
 
 ```mermaid
 sequenceDiagram
     participant U as User
     participant FE as Frontend App
-    participant MIG as MIG Canister (DAMS)
-    participant UR as UR Canister (DAMS)
-    participant SS as SS Canister (DAMS)
+    participant MIG_ROUTER as MIG Router (DAMS)
+    participant MIG_SHARD as MIG Shard (DAMS)
+    participant UR_SHARD as UR Shard (DAMS)
+    participant FAM_SHARD as FAM Shard (DAMS)
+    participant SS_CLUSTER as SS Cluster (DAMS)
 
     U->>FE: Enter email & password
-    FE->>MIG: initiate_srp_login(email) 
-    Note right of MIG: Looks up user/salt via UR (internal)
-    MIG-->>FE: Ok({ challenge, srp_salt })
+    FE->>MIG_ROUTER: initiate_srp_login_request(email)
+    MIG_ROUTER->>MIG_SHARD: route_initiate_srp_login(email)
+    MIG_SHARD->>FAM_SHARD: get_did_by_email_hash(email_hash)
+    FAM_SHARD-->>MIG_SHARD: did_user
+    MIG_SHARD->>UR_SHARD: get_srp_data(did_user)
+    UR_SHARD-->>MIG_SHARD: srp_salt, srp_verifier
+    MIG_SHARD->>MIG_SHARD: Generate server_ephemeral_B
+    MIG_SHARD-->>MIG_ROUTER: srp_challenge(tx_id, srp_salt, server_ephemeral_B)
+    MIG_ROUTER-->>FE: srp_challenge
+    
     FE->>FE: Calculate SRP Proofs (A, M1)
-    FE->>MIG: validate_srp_login(proofs)
-    Note right of MIG: Verifies proofs via UR (internal)
+    FE->>MIG_ROUTER: verify_srp_login_request(tx_id, did_user_for_routing, client_A, client_M1)
+    MIG_ROUTER->>MIG_SHARD: route_verify_srp_login(tx_id, client_A, client_M1)
+    MIG_SHARD->>MIG_SHARD: Validate M1, Generate M2 (server_proof)
+    
     alt SRP Proofs Valid
-        MIG->>SS: create_session(user_did)
-        SS->>SS: (Generate & Sign JWT)
-        SS-->>MIG: Ok(jwt)               
-        MIG-->>FE: Ok({ final_jwt })       
+        MIG_SHARD->>SS_CLUSTER: create_session(did_user, ic_principal)
+        SS_CLUSTER-->>MIG_SHARD: session_tokens (access_token, refresh_token)
+        MIG_SHARD-->>MIG_ROUTER: login_success(session_tokens, server_proof_M2)
+        MIG_ROUTER-->>FE: login_success(session_tokens, server_proof_M2)
         FE->>U: Logged in (JWT Stored)
     else SRP Proofs Invalid
-        MIG-->>FE: Err(LoginError::InvalidCredentials)
+        MIG_SHARD-->>MIG_ROUTER: login_failure(error)
+        MIG_ROUTER-->>FE: login_failure(error)
         FE->>U: Show Login Error
     end
 ```
-
 ### External API Interaction Flow (Example: Crypto Manager API)
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant FE as Frontend App
-    participant ExtAPI as External API (e.g., Crypto Mgr)
-    participant SS as SS Canister (DAMS - JWKS Provider)
-    participant DAMS_Other as Other DAMS Canister (e.g., BAM - Optional)
-    participant Chain as Blockchain/Explorer
+    participant ClientApp as Client Application
+    participant DAMS_UG as DAMS User Gateway
+    participant DAMS_SS as DAMS SS Cluster (JWKS Provider)
+    participant DAMS_Storage as DAMS Storage (FAM/BAM)
+    participant ExtAPI as External API (Crypto Mgr / AI Assistant)
 
-    U->>FE: Request Action (e.g., Get Balance)
-    FE->>ExtAPI: API Call (e.g., /balance) with DAMS JWT
-    ExtAPI->>SS: get_jwks() (To fetch public key for JWT verification)
-    SS-->>ExtAPI: JWKS Response (incl. Public Key)
-    ExtAPI->>ExtAPI: Validate DAMS JWT (Signature, iss, aud, exp) using fetched Public Key
+    U->>ClientApp: Login to DAMS (obtains DAMS JWT)
+    ClientApp-->>U: DAMS JWT (Access Token)
+
+    U->>ClientApp: Request Action involving External API (e.g., Get Balance)
+    ClientApp->>ExtAPI: API Call (e.g., /balance) with DAMS Access JWT in Authorization Header
+    
+    ExtAPI->>DAMS_SS: GET /.well-known/jwks.json (Fetch public keys to verify JWT)
+    DAMS_SS-->>ExtAPI: JWKS Response (Public Keys)
+    ExtAPI->>ExtAPI: Validate DAMS JWT (Signature, iss, aud, exp, etc.) using fetched Public Key
+    
     alt JWT is Valid
-        Note right of ExtAPI: Extract user_did from JWT 'sub' claim
-        opt External API needs more data from DAMS
-            ExtAPI->>DAMS_Other: Call DAMS (e.g., BAM.get_addresses) using user_did, potentially with backend API Key
-            DAMS_Other-->>ExtAPI: Requested Data (e.g., addresses)
-        end
-        ExtAPI->>ExtAPI: Perform its core logic (e.g., query blockchain)
-        ExtAPI-->>FE: Ok (Requested Data - e.g., Balances)
-        FE->>U: Display Data
+        Note right of ExtAPI: Extracts user_did from JWT 'sub' claim
+        ExtAPI->>DAMS_UG: Request User Data (e.g., /v1/users/{user_did}/profile or /v1/users/{user_did}/addresses) with DAMS Access JWT
+        DAMS_UG->>DAMS_UG: Validate DAMS JWT (as an API gateway)
+        DAMS_UG->>DAMS_Storage: Fetch data for user_did (from FAM_SHARD for profile, BAM_SHARD for addresses)
+        DAMS_Storage-->>DAMS_UG: User Data (e.g., public profile, addresses)
+        DAMS_UG-->>ExtAPI: User Data Response 
+        
+        ExtAPI->>ExtAPI: Perform its core logic (e.g., query blockchain using fetched addresses)
+        ExtAPI-->>ClientApp: External API Result (e.g., Balances)
+        ClientApp->>U: Display Result
     else JWT is Invalid
-        ExtAPI-->>FE: Error (e.g., 401 Unauthorized)
-        FE->>U: Show Error / Request Re-Login
+        ExtAPI-->>ClientApp: Error 401 Unauthorized
+        ClientApp->>U: Show Error / Request Re-Login to DAMS
     end
 ```
 
