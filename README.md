@@ -57,7 +57,7 @@ This architecture ensures decentralization and robust security while allowing fo
     -   Google Account (OAuth)
     -   Telegram Account (OAuth)
 -   **Email Uniqueness**: Guaranteed during registration.
--   **IC Principal**: Generated from the client's seed phrase, serves as the primary identifier.
+-   **IC Principal: Generated from a cryptographically secure Master Key created on the client's device. This Master Key is never stored directly and is protected by the VSS scheme.
 -   **VSS Security**: 3-of-5 threshold scheme, with 2 shares managed by DAMS on the IC.
 -   **Login**: Via Email/Password (SRP), Google, or Telegram.
 -   **Account Linking**: Ability to link Google/Telegram accounts to an existing DAMS DID.
