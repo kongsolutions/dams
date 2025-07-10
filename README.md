@@ -187,4 +187,4 @@ sequenceDiagram
     end
 ```
 
-© 2025 KONG Wallet. All rights reserved.
+© 2025 KONG Solutions. All rights reserved.
